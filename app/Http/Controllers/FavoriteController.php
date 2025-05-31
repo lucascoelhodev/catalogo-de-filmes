@@ -20,6 +20,11 @@ class FavoriteController extends Controller
         $favorite = $this->favoriteService->addFavorite($data);
         return response()->json($favorite, 201);
     }
+    public function index()
+    {
+        $favorites = $this->favoriteService->listFavorites();
+        return response()->json($favorites);
+    }
 
     
 }

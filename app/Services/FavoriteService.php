@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\Favorite;
 use App\Transformers\FavoriteTransformer;
+use League\Fractal\Manager;
+use League\Fractal\Resource\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 
@@ -42,4 +44,18 @@ class FavoriteService
         ]);
         return $response->json()['genres'];
     }
+    public function listFavorites()
+{
+    $favorites = Favorite::with('genres')->get();
+
+    $response = fractal()
+        ->collection($favorites)
+        ->transformWith(new FavoriteTransformer())
+        ->include('genres')
+        ->respond();
+
+    $dataArray = json_decode($response->getContent(), true);
+    return response()->json($dataArray);
+}
+
 }
