@@ -16,7 +16,8 @@ class MovieService
     {
         $response = Http::get("{$this->apiUrl}/search/movie", [
             'api_key' => env('TMDB_API_KEY'),
-            'query' => $query
+            'query' => $query,
+            'language' => 'pt-BR'
         ]);
 
         return $response->json();
