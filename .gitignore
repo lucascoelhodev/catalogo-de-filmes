@@ -1,7 +1,67 @@
-/vendor
-/node_modules
-.env
-/storage/*.key
+# Laravel padrão
+
+/vendor/
+/node_modules/
+
 /public/storage
-*.sqlite
+/storage/*.key
+/storage/app/public
+/storage/debugbar
+/storage/framework/cache/data
+/storage/framework/sessions
+/storage/framework/views
+/storage/logs
+
+/bootstrap/cache
+
+.env
+.env.*      # Ignorar todos arquivos de ambiente
+.phpunit.result.cache
+.phpactor.json
+.phpunit.cache
+
+# IDEs e editores
+/.idea/
+/.vscode/
+/*.sublime-project
+/*.sublime-workspace
+/.fleet/
+/.zed/
+/*.code-workspace
+
+# Sistema e SO
+.DS_Store
+Thumbs.db
 *.log
+npm-debug.log*
+yarn-error.log*
+
+# Build e asset bundles
+/public/build/
+/public/hot
+
+# Homestead e outras configs locais
+Homestead.json
+Homestead.yaml
+
+# Auth e configs sensíveis
+/auth.json
+
+# Arquivos temporários
+*.cache
+*.tmp
+
+# Outros (caso use)
+*.sql
+*.sqlite
+*.sqlite3
+
+# Docker volumes (se usar)
+docker-compose.override.yml
+
+# Evitar subir arquivos gerados pelo Composer
+composer.lock
+
+# Laravel Mix e outras ferramentas de build
+/public/mix-manifest.json
+
