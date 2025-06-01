@@ -13,15 +13,18 @@ class APITMDBService
         $this->apiUrl = env('TMBD_API_URL');
     }
 
-    public function searchMovies($query)
-    {
-        $response = Http::get("{$this->apiUrl}/search/movie", [
-            'api_key' => env('TMDB_API_KEY'),
-            'query' => $query,
-            'language' => 'pt-BR'
-        ]);
-        return $response->json();
-    }
+    public function searchMovies($query, $page = 1)
+{
+    $response = Http::get("{$this->apiUrl}/search/movie", [
+        'api_key' => env('TMDB_API_KEY'),
+        'query' => $query,
+        'language' => 'pt-BR',
+        'page' => $page,  
+    ]);
+
+    return $response->json();
+}
+
     public function getMovie($movie_id)
     {
         $response = Http::get("{$this->apiUrl}/movie/{$movie_id}", [

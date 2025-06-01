@@ -1,7 +1,7 @@
 <template>
   <div class="search-page">
-    <input v-model="query" @keyup.enter="searchMovies" placeholder="Digite o nome do filme" />
-    <button @click="searchMovies">Buscar</button>
+    <input v-model="query" @keyup.enter="searchMovies(1)" placeholder="Digite o nome do filme" />
+    <button @click="searchMovies(1)">Buscar</button>
 
     <div v-if="loading">Carregando...</div>
 
@@ -10,6 +10,17 @@
     <div>
       <MovieCard v-for="movie in movies" :key="movie.id" :movie="movie" :isFavorite="favoritesMap.has(movie.id)"
         @add="addFavorite" @remove="removeFavorite" />
+    </div>
+
+    <div v-if="totalPages > 1" class="pagination">
+      <button :disabled="currentPage === 1" @click="searchMovies(currentPage - 1)">Anterior</button>
+
+      <button v-for="page in pagesToShow" :key="page" :class="{ active: page === currentPage }"
+        @click="searchMovies(page)">
+        {{ page }}
+      </button>
+
+      <button :disabled="currentPage === totalPages" @click="searchMovies(currentPage + 1)">Próxima</button>
     </div>
   </div>
 </template>
@@ -26,29 +37,33 @@ export default {
       movies: [],
       loading: false,
       favoritesMap: new Map(),
+      currentPage: 1,
+      totalPages: 1,
     }
   },
   created() {
     this.loadFavorites()
   },
   methods: {
-    async searchMovies() {
+    async searchMovies(page = 1) {
+      
       if (!this.query.trim()) return;
       this.loading = true;
+      this.currentPage = page;
       try {
         const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
         const response = await axios.get(
-          `${apiBaseUrl}tmdb/search?query=${encodeURIComponent(this.query)}`
+          `${apiBaseUrl}tmdb/search?query=${encodeURIComponent(this.query)}&page=${page}`
         );
         this.movies = response.data.results;
+        this.totalPages = response.data.total_pages || 1; // Ajuste se a API retornar um campo diferente
       } catch (error) {
         alert('Erro ao buscar filmes');
         console.error(error);
       } finally {
         this.loading = false;
       }
-    }
-    ,
+    },
     async loadFavorites() {
       try {
         const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
@@ -88,6 +103,25 @@ export default {
       }
     },
   },
+  computed: {
+    pagesToShow() {
+      const maxPagesToShow = 5; // quantidade máxima de botões de página visíveis
+      let start = Math.max(this.currentPage - Math.floor(maxPagesToShow / 2), 1);
+      let end = start + maxPagesToShow - 1;
+
+      if (end > this.totalPages) {
+        end = this.totalPages;
+        start = Math.max(end - maxPagesToShow + 1, 1);
+      }
+
+      const pages = [];
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+      return pages;
+    }
+  }
+
 }
 </script>
 
@@ -111,4 +145,18 @@ button {
   border: none;
   border-radius: 4px;
 }
+
+.pagination {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.pagination button.active {
+  font-weight: bold;
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+}
+
 </style>

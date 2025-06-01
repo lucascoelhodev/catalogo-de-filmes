@@ -15,15 +15,18 @@ class APITMDBController extends Controller
     }
 
     public function search(Request $request)
-    {
-        $query = $request->get('query');
-        if (!$query) {
-            return response()->json(['error' => 'Parâmetro de busca é obrigatório'], 422);
-        }
-        $results = $this->apiTMDBService->searchMovies($query);
+{
+    $query = $request->get('query');
+    $page = $request->get('page', 1); // pega o parâmetro page, default 1
 
-        return response()->json($results);
+    if (!$query) {
+        return response()->json(['error' => 'Parâmetro de busca é obrigatório'], 422);
     }
+
+    $results = $this->apiTMDBService->searchMovies($query, $page);
+
+    return response()->json($results);
+}
     public function getMovie($id){
         return $this->apiTMDBService->getMovie($id);
     }
