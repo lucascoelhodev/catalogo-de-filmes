@@ -1,9 +1,10 @@
 <?php
+
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
 
-class MovieService
+class APITMDBService
 {
     protected $apiUrl;
 
@@ -19,7 +20,15 @@ class MovieService
             'query' => $query,
             'language' => 'pt-BR'
         ]);
-
+        return $response->json();
+    }
+    public function getMovie($movie_id)
+    {
+        $response = Http::get("{$this->apiUrl}/movie/{$movie_id}", [
+            'api_key' => env('TMDB_API_KEY'),
+            'language' => 'pt-BR'
+        ]);
+        dd($response->json());
         return $response->json();
     }
 }
