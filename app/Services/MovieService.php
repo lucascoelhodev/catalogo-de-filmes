@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Criteria\MovieCriteria;
 use App\Models\Movie;
 use App\Repositories\MovieRepository;
+use App\Transformers\GenreTransformer;
 use App\Transformers\MovieTransformer;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -76,5 +77,22 @@ class MovieService
         $favorite->delete();
         DB::commit();
         return true;
+    }
+    public function getMovie($id)
+    {
+        $movie = $this->movieRepository->find($id);
+        if (!$movie) {
+            return response()->json(['message' => 'Filme não encontrado'], 404);
+        }
+        $response = fractal($movie, new MovieTransformer())->respond();
+        $dataArray = json_decode($response->getContent(), true);
+        return response()->json($dataArray);
+    }
+    public function getGenres()
+    {
+        $genres = $this->genreService->all();
+        
+        $dataArray = json_decode($genres->getContent(), true);
+        return response()->json($dataArray);
     }
 }

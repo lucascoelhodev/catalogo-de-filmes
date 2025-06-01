@@ -9,3 +9,5 @@ Route::get('/tmdb/{id}', [APITMDBController::class, 'getMovie']);
 Route::post('/movie', [MovieController::class, 'add']);
 Route::get('/movie', [MovieController::class, 'index']);
 Route::delete('/movie/{id}', [MovieController::class, 'remove']);
+Route::get('/movie/{id}', [MovieController::class, 'show']);
+Route::get('genres', [MovieController::class, 'genres']);

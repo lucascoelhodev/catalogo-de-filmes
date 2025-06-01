@@ -31,4 +31,14 @@ class MovieController extends Controller
         $this->movieService->removeMovie($id);
         return response()->json(['message' => 'Favorito removido com sucesso!']);
     }
+    public function show($id)
+    {
+        $movie = $this->movieService->getMovie($id);
+        return response()->json($movie);
+    }
+    public function genres()
+    {
+        $genres = $this->movieService->getGenres();
+        return response()->json($genres);
+    }
 }
