@@ -19,7 +19,10 @@ class Favorite extends Model
     public function genres()
     {
         return $this->belongsToMany(Genre::class, 'favorite_genres', 'favorite_movie', 'genre_id')
-                    ->withTimestamps();
+            ->withTimestamps();
+    }
+    public function favoriteGenres()
+    {
+        return $this->hasMany(FavoriteGenre::class, 'favorite_movie', 'id');
     }
 }
-

@@ -25,6 +25,9 @@ class FavoriteController extends Controller
         $favorites = $this->favoriteService->listFavorites();
         return response()->json($favorites);
     }
-
-    
+    public function remove($id)
+    {
+        $this->favoriteService->removeFavorite($id);
+        return response()->json(['message' => 'Favorito removido com sucesso!']);
+    }
 }

@@ -58,4 +58,18 @@ class FavoriteService
     return response()->json($dataArray);
 }
 
+public function removeFavorite($id)
+{        
+    DB::beginTransaction();
+    $favorite = Favorite::findOrFail($id);
+    $favoriteGenres = $favorite->favoriteGenres;
+    if(isset($favoriteGenres)){
+        $favoriteGenres->each(function ($favoriteGenre) {
+            $this->favoriteGenreService->delete($favoriteGenre->id);
+        });
+    }
+    $favorite->delete();
+    DB::commit();
+    return true;
+}
 }
