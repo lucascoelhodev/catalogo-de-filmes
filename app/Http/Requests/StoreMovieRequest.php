@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class StoreFavoriteRequest extends FormRequest
+class StoreMovieRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -18,7 +18,7 @@ class StoreFavoriteRequest extends FormRequest
             'tmdb_id' => [
                 'required',
                 'integer',
-                Rule::unique('favorites')->whereNull('deleted_at'),
+                Rule::unique('movies')->whereNull('deleted_at'),
             ],
             'title' => 'required|string|max:255',
             'poster_path' => 'nullable|string|max:255',

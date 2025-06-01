@@ -5,10 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Favorite extends Model
+class Movie extends Model
 {
     use SoftDeletes;
-
+    protected $table = 'movies';
     protected $fillable = [
         'tmdb_id',
         'title',
@@ -18,11 +18,11 @@ class Favorite extends Model
     ];
     public function genres()
     {
-        return $this->belongsToMany(Genre::class, 'favorite_genres', 'favorite_movie', 'genre_id')
+        return $this->belongsToMany(Genre::class, 'movie_genres', 'movie_id', 'genre_id')
             ->withTimestamps();
     }
     public function favoriteGenres()
     {
-        return $this->hasMany(FavoriteGenre::class, 'favorite_movie', 'id');
+        return $this->hasMany(MovieGenre::class, 'movie_id', 'id');
     }
 }

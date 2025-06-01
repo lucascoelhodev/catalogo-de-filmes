@@ -2,16 +2,16 @@
 namespace App\Transformers;
 
 use League\Fractal\TransformerAbstract;
-use App\Models\Favorite;
+use App\Models\Movie;
 use Carbon\Carbon;
 
-class FavoriteTransformer extends TransformerAbstract  
+class MovieTransformer extends TransformerAbstract  
 {
     protected array $availableIncludes = [
         'genres'
     ];
 
-    public function transform(Favorite $favorite): array
+    public function transform(Movie $favorite): array
     {
         return [
             'id' => $favorite->id,
@@ -26,7 +26,7 @@ class FavoriteTransformer extends TransformerAbstract
         ];
     }
 
-    public function includeGenres(Favorite $favorite)
+    public function includeGenres(Movie $favorite)
     {
         return $this->collection($favorite->genres, new GenreTransformer());
     }

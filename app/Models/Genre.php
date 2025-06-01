@@ -12,9 +12,9 @@ class Genre extends Model
         'tmdb_id',
         'name',
     ];
-    public function favorites()
+    public function movies()
     {
-        return $this->belongsToMany(Favorite::class, 'favorite_genres', 'genre_id', 'favorite_movie')
+        return $this->belongsToMany(Movie::class, 'movie_genres', 'genre_id', 'movie_id')
                     ->withTimestamps();
     }
 }
