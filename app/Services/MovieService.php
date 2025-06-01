@@ -2,36 +2,34 @@
 
 namespace App\Services;
 
-use App\Models\Favorite;
-use App\Transformers\FavoriteTransformer;
-use League\Fractal\Manager;
-use League\Fractal\Resource\Collection;
+use App\Models\Movie;
+use App\Transformers\MovieTransformer;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 
-class FavoriteService
+class MovieService
 {
     protected $apiUrl;
 
     public $genreService;
     public $favoriteGenreService;
     public function __construct(GenreService $genreService,
-    FavoriteGenreService $favoriteGenreService)
+    MovieGenreService $favoriteGenreService)
     {
         $this->genreService = $genreService;
         $this->apiUrl = env('TMBD_API_URL');
         $this->favoriteGenreService = $favoriteGenreService;
     }
-    public function addFavorite($data)
+    public function addMovie($data)
     {
         DB::beginTransaction();
-        $favorite = Favorite::create($data);
+        $favorite = Movie::create($data);
         $genres = $this->searchGenresByMovieId($data['tmdb_id']);
         foreach($genres as $genre) {
             $genreDb = $this->genreService->create($genre);
             $this->favoriteGenreService->create($genreDb->id, $favorite->id);
         }
-        $response = fractal($favorite, new FavoriteTransformer())->respond();
+        $response = fractal($favorite, new MovieTransformer())->respond();
         $dataArray = json_decode($response->getContent(), true);
         DB::commit();
         return $dataArray;
@@ -44,13 +42,13 @@ class FavoriteService
         ]);
         return $response->json()['genres'];
     }
-    public function listFavorites()
+    public function listMovies()
 {
-    $favorites = Favorite::with('genres')->get();
+    $movies = Movie::with('genres')->get();
 
     $response = fractal()
-        ->collection($favorites)
-        ->transformWith(new FavoriteTransformer())
+        ->collection($movies)
+        ->transformWith(new MovieTransformer())
         ->include('genres')
         ->respond();
 
@@ -58,10 +56,10 @@ class FavoriteService
     return response()->json($dataArray);
 }
 
-public function removeFavorite($id)
+public function removeMovie($id)
 {        
     DB::beginTransaction();
-    $favorite = Favorite::findOrFail($id);
+    $favorite = Movie::findOrFail($id);
     $favoriteGenres = $favorite->favoriteGenres;
     if(isset($favoriteGenres)){
         $favoriteGenres->each(function ($favoriteGenre) {

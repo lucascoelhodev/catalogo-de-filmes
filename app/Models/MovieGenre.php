@@ -5,12 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class FavoriteGenre extends Model
+class MovieGenre extends Model
 {
     use SoftDeletes;
-    protected $table = 'favorite_genres';
+    protected $table = 'movie_genres';
     protected $fillable = [
-        'favorite_movie',
+        'movie_id',
         'genre_id',
     ];
 }
