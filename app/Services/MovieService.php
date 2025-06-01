@@ -91,7 +91,6 @@ class MovieService
     public function getGenres()
     {
         $genres = $this->genreService->all();
-        
         $dataArray = json_decode($genres->getContent(), true);
         return response()->json($dataArray);
     }

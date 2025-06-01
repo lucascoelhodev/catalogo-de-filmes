@@ -24,7 +24,7 @@ class MovieController extends Controller
     public function index(Request $request)
     {
         $movies = $this->movieService->listMovies($request);
-        return response()->json($movies);
+        return $movies;
     }
     public function remove($id)
     {
@@ -39,6 +39,6 @@ class MovieController extends Controller
     public function genres()
     {
         $genres = $this->movieService->getGenres();
-        return response()->json($genres);
+        return $genres;
     }
 }

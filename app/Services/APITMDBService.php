@@ -20,6 +20,7 @@ class APITMDBService
             'query' => $query,
             'language' => 'pt-BR'
         ]);
+        dd($response->json());
         return $response->json();
     }
     public function getMovie($movie_id)
