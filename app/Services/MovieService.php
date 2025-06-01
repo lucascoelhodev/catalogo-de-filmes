@@ -9,6 +9,7 @@ use App\Transformers\GenreTransformer;
 use App\Transformers\MovieTransformer;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use League\Fractal\Pagination\IlluminatePaginatorAdapter;
 
 class MovieService
 {
@@ -53,13 +54,13 @@ class MovieService
     {
         $filters = $request->only(['genre_id']);
         $this->movieRepository->pushCriteria(new MovieCriteria($filters));
-        $movies = $this->movieRepository->with('genres')->all();
+        $movies = $this->movieRepository->with('genres')->paginate();
         $response = fractal()
-            ->collection($movies)
-            ->transformWith(new MovieTransformer())
-            ->include('genres')
-            ->respond();
-
+        ->collection($movies->items())
+        ->transformWith(new MovieTransformer())
+        ->include('genres')
+        ->paginateWith(new IlluminatePaginatorAdapter($movies))
+        ->respond();
         $dataArray = json_decode($response->getContent(), true);
         return response()->json($dataArray);
     }

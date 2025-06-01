@@ -105,7 +105,7 @@ export default {
   },
   computed: {
     pagesToShow() {
-      const maxPagesToShow = 5; // quantidade máxima de botões de página visíveis
+      const maxPagesToShow = 5; 
       let start = Math.max(this.currentPage - Math.floor(maxPagesToShow / 2), 1);
       let end = start + maxPagesToShow - 1;
 
