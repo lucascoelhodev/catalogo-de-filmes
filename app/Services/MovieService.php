@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Criteria\MovieCriteria;
 use App\Models\Movie;
+use App\Repositories\MovieRepository;
 use App\Transformers\MovieTransformer;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -13,19 +15,23 @@ class MovieService
 
     public $genreService;
     public $favoriteGenreService;
-    public function __construct(GenreService $genreService,
-    MovieGenreService $favoriteGenreService)
-    {
+    public $movieRepository;
+    public function __construct(
+        GenreService $genreService,
+        MovieGenreService $favoriteGenreService,
+        MovieRepository $movieRepository
+    ) {
         $this->genreService = $genreService;
         $this->apiUrl = env('TMBD_API_URL');
         $this->favoriteGenreService = $favoriteGenreService;
+        $this->movieRepository = $movieRepository;
     }
     public function addMovie($data)
     {
         DB::beginTransaction();
         $favorite = Movie::create($data);
         $genres = $this->searchGenresByMovieId($data['tmdb_id']);
-        foreach($genres as $genre) {
+        foreach ($genres as $genre) {
             $genreDb = $this->genreService->create($genre);
             $this->favoriteGenreService->create($genreDb->id, $favorite->id);
         }
@@ -42,32 +48,33 @@ class MovieService
         ]);
         return $response->json()['genres'];
     }
-    public function listMovies()
-{
-    $movies = Movie::with('genres')->get();
+    public function listMovies($request)
+    {
+        $filters = $request->only(['genre_id']);
+        $this->movieRepository->pushCriteria(new MovieCriteria($filters));
+        $movies = $this->movieRepository->with('genres')->all();
+        $response = fractal()
+            ->collection($movies)
+            ->transformWith(new MovieTransformer())
+            ->include('genres')
+            ->respond();
 
-    $response = fractal()
-        ->collection($movies)
-        ->transformWith(new MovieTransformer())
-        ->include('genres')
-        ->respond();
-
-    $dataArray = json_decode($response->getContent(), true);
-    return response()->json($dataArray);
-}
-
-public function removeMovie($id)
-{        
-    DB::beginTransaction();
-    $favorite = Movie::findOrFail($id);
-    $favoriteGenres = $favorite->favoriteGenres;
-    if(isset($favoriteGenres)){
-        $favoriteGenres->each(function ($favoriteGenre) {
-            $this->favoriteGenreService->delete($favoriteGenre->id);
-        });
+        $dataArray = json_decode($response->getContent(), true);
+        return response()->json($dataArray);
     }
-    $favorite->delete();
-    DB::commit();
-    return true;
-}
+
+    public function removeMovie($id)
+    {
+        DB::beginTransaction();
+        $favorite = Movie::findOrFail($id);
+        $favoriteGenres = $favorite->favoriteGenres;
+        if (isset($favoriteGenres)) {
+            $favoriteGenres->each(function ($favoriteGenre) {
+                $this->favoriteGenreService->delete($favoriteGenre->id);
+            });
+        }
+        $favorite->delete();
+        DB::commit();
+        return true;
+    }
 }

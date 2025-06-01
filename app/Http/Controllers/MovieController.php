@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreMovieRequest;
 use App\Services\MovieService;
+use Illuminate\Http\Request;
 
 class MovieController extends Controller
 {
@@ -20,9 +21,9 @@ class MovieController extends Controller
         $movie = $this->movieService->addMovie($data);
         return response()->json($movie, 201);
     }
-    public function index()
+    public function index(Request $request)
     {
-        $movies = $this->movieService->listMovies();
+        $movies = $this->movieService->listMovies($request);
         return response()->json($movies);
     }
     public function remove($id)
