@@ -64,4 +64,5 @@ composer.lock
 
 # Laravel Mix e outras ferramentas de build
 /public/mix-manifest.json
-
+/frontend/node_modules
+frontend/.vite
