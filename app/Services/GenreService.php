@@ -2,10 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\Favorite;
 use App\Models\Genre;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
+use App\Transformers\GenreTransformer;
 
 class GenreService
 {
@@ -30,5 +28,13 @@ class GenreService
             $genre = $genreDb;
         }
         return $genre;
+    }
+    public function all()
+    {
+        $genres = Genre::all();
+        return fractal()
+            ->collection($genres)
+            ->transformWith(new GenreTransformer())
+            ->respond();
     }
 }
