@@ -1,61 +1,70 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Catálogo de Filmes - Aplicação Full Stack
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Este projeto é um catálogo de filmes que integra a API pública do The Movie Database (TMDB) para busca de filmes e permite gerenciar localmente uma lista de favoritos.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Como rodar o projeto localmente com Docker
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Requisitos
+- Docker e Docker Compose instalados ([instruções](https://docs.docker.com/get-docker/))
+- Chave de API do TMDB (veja seção abaixo)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Passo a passo
 
-## Learning Laravel
+1. Clone o repositório:
+   ```bash
+   git clone https://github.com/lucascoelhodev/catalogo-de-filmes.git
+   cd catalogo-de-filmes
+2. Copie o arquivo de ambiente e configure as variáveis:
+   ```bash
+   cp .env.example .env
+Edite o .env para configurar:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+APP_KEY: será gerada no próximo passo
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+DB_HOST, DB_PORT, DB_DATABASE, DB_USERNAME, DB_PASSWORD
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+TMDB_API_KEY: sua chave da API do TMDB
+3. Rode o composer install:
+    ```bash
+    composer install
+    
+4. Gere a chave da aplicação Laravel:
+    ```bash
+    docker-compose run --rm laravel.test php artisan key:generate
+5. Suba os containers:
+   ```bash
+   docker-compose up -d
+6. Rode as migrations:
+   ```bash
+   docker-compose exec laravel.test php artisan migrate
+### Testando a aplicação
+Execute dentro do container da aplicação:
+    ```bash
+    
+    docker-compose exec laravel.test php artisan test
+### Obtendo a chave da API do TMDB
+1. Acesse: https://www.themoviedb.org/
 
-## Laravel Sponsors
+2. Crie uma conta gratuita ou faça login
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+3. Vá para sua conta > Configurações > API
 
-### Premium Partners
+4. Solicite uma chave de API (gratuita)
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+5. Copie a chave e insira no arquivo .env na variável TMDB_API_KEY
+### Subindo o frontend
+1. Navegue até a pasta do frontend:
+   ```bash
+   cd frontend
+2. Copie o arquivo de ambiente e configure as variáveis:
+   ```bash
+   cp .env.example .env
+3. Instale as dependências:
+   ```bash
+   npm install
+4. Suba o container:
+    ```bash
+   docker-compose up -d
+5. Acesse via navegador: http://localhost:5174/
